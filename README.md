@@ -7,8 +7,8 @@ Pre-training step for downloading the ground truth captions, the images and CNN 
 
 Usage for training an image captioning model for flickr8k:
 ```
-cd src \
-make \
+cd src
+make
 ```
 
 Results:\
