@@ -13,6 +13,26 @@ sys.path.append(os.path.join(
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from utils import exit
 
+def download_images(dataset_name):
+	file_id = ""
+	if dataset_name == 'flickr8k':
+		file_id = '16FR_-ftYTX4kyf81jwDnX9oM3K5GA3DL'
+	else:
+		message = '[ERROR] Images not found on Google Drive. Try manually downloading them.'
+		exit(message, -1)
+
+	images_path = os.path.join('..', 'data', dataset_name, 'images.zip')
+	gdd.download_file_from_google_drive(
+		file_id, 
+		dest_path=images_path,
+		unzip=True
+	)
+
+	os.remove(images_path)
+
+	message = '[SUCCESS] ' + dataset_name + ' images have been downloaded'
+	exit(message, 1)
+
 
 def download_model(model_name):
 	"""
@@ -123,7 +143,7 @@ def download_captions(dataset_name):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--download', type=str, dest='download', 
-			help='cnn|cnn_features|captions')
+			help='cnn|cnn_features|captions|images')
 	parser.add_argument('--dataset-name', type=str, dest='dataset_name', 
 			help='flickr8k|flickr30k|mscoco')
 	parser.add_argument('--cnn-name', type=str, dest='cnn_name', 
@@ -148,3 +168,9 @@ if __name__ == '__main__':
 			download_captions(args.dataset_name)
 		else:
 			exit('[ERROR] dataset_name should be flickr8k|flickr30k|mscoco', -1)
+	elif args.download == 'images':
+		if args.dataset_name is not None:
+			download_images(args.dataset_name)
+		else:
+			exit('[ERROR] dataset_name should be flickr8k|flickr30k|mscoco', -1)
+
