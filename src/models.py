@@ -102,7 +102,7 @@ def pre_inject_model(model_name, batch_size, learning_rate, maxlen, voc_size, em
 
 	# embed CNN features to have same dimension with word embeddings
 	embedded_cnn_feats = Dense(units=embed_size,
-							   activation='relu')(normalized_cnn_feats)
+				   activation='relu')(normalized_cnn_feats)
 
 	# add time dimension so that this layer output shape is (None, 1, embed_size)
 	final_cnn_feats = RepeatVector(1)(embedded_cnn_feats)
@@ -137,10 +137,10 @@ def pre_inject_model(model_name, batch_size, learning_rate, maxlen, voc_size, em
 	
 	# now feed the concatenation into a LSTM layer (many-to-many)
 	lstm_layer = LSTM(units=embed_size,
-					  input_shape=(maxlen + 1, embed_size),
-					  return_sequences=True,
-					  dropout=dropout_rate, 
-					  recurrent_dropout=0.15)(img_caption_concat)
+			  input_shape=(maxlen + 1, embed_size),
+			  return_sequences=True,
+			  dropout=dropout_rate, 
+			  recurrent_dropout=0.15)(img_caption_concat)
 
 	# # create a custom object for our 'temperature_softmax' activation
 	temperature = 1.1    # TODO: make this a parameter
@@ -149,16 +149,16 @@ def pre_inject_model(model_name, batch_size, learning_rate, maxlen, voc_size, em
 
 	# create a fully connected layer to make the predictions
 	pred_layer = TimeDistributed(Dense(units=voc_size,
-									   activation='temperature_softmax'))(lstm_layer)
+					   activation='temperature_softmax'))(lstm_layer)
 
 	# build the model with CNN features and captions as input and 
 	# predictions output
 	model = Model(inputs=[cnn_feats_input, caption_input], 
-				  outputs=pred_layer)
+		      outputs=pred_layer)
 
 	model.compile(loss='categorical_crossentropy',
-				  optimizer='adam', 
-				  metrics=['accuracy'])	# is this needed ???
+		      optimizer='adam', 
+		      metrics=['accuracy'])
 	model.summary()
 	
 	return model
